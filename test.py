@@ -14,7 +14,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Xử lý lệnh /start."""
     user = update.effective_user
     await update.message.reply_html(
-        f"Xin chào {user.mention_html()}! Tôi là bot test của bạn.",
+        f"Xin chào {user.mention_html()}! Tôi là Trợ Lý của bạn.",
     )
     await task(update, context)  # Đừng quên await
 
