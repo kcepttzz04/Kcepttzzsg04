@@ -1,23 +1,20 @@
-import telebot
-import os
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# Lấy token từ biến môi trường (Environment Variable)
-# Đây là cách an toàn để quản lý token, không nên hardcode trực tiếp vào code
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 if not BOT_TOKEN:
     print("Error: BOT_TOKEN environment variable not set.")
     exit()
 
-bot = telebot.TeleBot(BOT_TOKEN)
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print(f"Đã nhận /start từ: {update.effective_user.id}")
+    await update.message.reply_text("Chào bạn từ PTB 😄")
 
-@bot.message_handler(commands=['start', 'hello'])
-def send_welcome(message):
-    bot.reply_to(message, "Chào mừng bạn! Tôi là bot của bạn.")
+if __name__ == '__main__':
+    app = ApplicationBuilder().token("BOT_TOKEN").build()
 
-@bot.message_handler(func=lambda message: True)
-def echo_all(message):
-    bot.reply_to(message, message.text)
+    app.add_handler(CommandHandler("start", start))
 
-print("Bot đang chạy...")
-bot.polling()
+    print("Bot đang chạy nhé.")
+    app.run_polling()
