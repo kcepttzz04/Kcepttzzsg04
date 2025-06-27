@@ -3,7 +3,7 @@ import os
 
 # Lấy token từ biến môi trường (Environment Variable)
 # Đây là cách an toàn để quản lý token, không nên hardcode trực tiếp vào code
-BOT_TOKEN = os.environ.get('8099339703:AAHINPHp70N9r0VOXCIa1fQshcYWRZONWf8')
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 if not BOT_TOKEN:
     print("Error: BOT_TOKEN environment variable not set.")
