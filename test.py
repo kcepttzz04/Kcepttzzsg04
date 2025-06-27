@@ -1,9 +1,9 @@
 import os
 import logging
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
-# Thiết lập logging cơ bản để xem các thông báo từ bot
+# Thiết lập logging cơ bản
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -16,48 +16,38 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_html(
         f"Xin chào {user.mention_html()}! Tôi là bot test của bạn.",
     )
-    task(update, context)
+    await task(update, context)  # Đừng quên await
+
 async def task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Xử lý lệnh /task."""
+    """Xử lý hiển thị menu task."""
     keyboard = [
-        InlineKeyboardButton("Thêm công việc", callback_data='add_task'),
-        InlineKeyboardButton("Xem công việc", callback_data='view_task'),
-        InlineKeyboardButton("Hoàn thành công việc", callback_data='end_task')
+        [InlineKeyboardButton("Thêm công việc", callback_data='add_task')],
+        [InlineKeyboardButton("Xem công việc", callback_data='view_task')],
+        [InlineKeyboardButton("Hoàn thành công việc", callback_data='end_task')]
     ]
-    Replymarkup = InlineKeyboardMarkup(keyboard)
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     if update.message:
-        update.message.reply_text('Chọn một lựa chọn:', reply_markup=reply_markup)
+        await update.message.reply_text('Chọn một lựa chọn:', reply_markup=reply_markup)
     elif update.callback_query:
-        query = update.callback
-        query.message.edit_text('Chọn một lựa chọn:', reply_markup=reply_markup)
-
-
-# async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-#     """Echo lại tin nhắn người dùng gửi."""
-#     await update.message.reply_text(update.message.text)
+        query = update.callback_query
+        await query.message.edit_text('Chọn một lựa chọn:', reply_markup=reply_markup)
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Gửi tin nhắn trợ giúp khi lệnh /help được gọi."""
-    await update.message.reply_text("Đây là bot test của bạn. Bạn có thể gõ bất cứ gì tôi sẽ lặp lại.")
+    await update.message.reply_text("Đây là bot test của bạn. Gõ /start để hiển thị menu task.")
 
 def main() -> None:
-    """Chạy bot."""
-    # Lấy token từ biến môi trường
     BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
     if not BOT_TOKEN:
         logger.error("BOT_TOKEN environment variable not set. Please set it on Railway.")
-        exit(1) # Thoát nếu không có token
+        exit(1)
 
-    # Tạo đối tượng Application và truyền token bot của bạn vào.
     application = Application.builder().token(BOT_TOKEN).build()
 
-    # Thêm các trình xử lý lệnh và tin nhắn
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
-    # application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
-    # Bắt đầu bot
     logger.info("Bot đang bắt đầu polling...")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
