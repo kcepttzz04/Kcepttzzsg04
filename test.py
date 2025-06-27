@@ -55,7 +55,7 @@ def main() -> None:
     # Thêm các trình xử lý lệnh và tin nhắn
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    # application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
     # Bắt đầu bot
     logger.info("Bot đang bắt đầu polling...")
