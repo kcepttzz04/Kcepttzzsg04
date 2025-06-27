@@ -16,10 +16,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_html(
         f"Xin chào {user.mention_html()}! Tôi là bot test của bạn.",
     )
+    task(update, context)
+async def task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Xử lý lệnh /task."""
+    keyboard = [
+        InlineKeyboardButton("Thêm công việc", callback_data='add_task'),
+        InlineKeyboardButton("Xem công việc", callback_data='view_task'),
+        InlineKeyboardButton("Hoàn thành công việc", callback_data='end_task')
+    ]
+    Replymarkup = InlineKeyboardMarkup(keyboard)
+    if update.message:
+        update.message.reply_text('Chọn một lựa chọn:', reply_markup=reply_markup)
+    elif update.callback_query:
+        query = update.callback
+        query.message.edit_text('Chọn một lựa chọn:', reply_markup=reply_markup)
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Echo lại tin nhắn người dùng gửi."""
-    await update.message.reply_text(update.message.text)
+
+# async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+#     """Echo lại tin nhắn người dùng gửi."""
+#     await update.message.reply_text(update.message.text)
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Gửi tin nhắn trợ giúp khi lệnh /help được gọi."""
